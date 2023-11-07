@@ -52,7 +52,7 @@ const riskSchema = mongoose.Schema(
 ) 
 
 const Risk= mongoose.model("Risk", riskSchema);
-module.exports = Risk;
+
 
 const data = [
     {
@@ -200,10 +200,25 @@ const data = [
       },
 ];
 
-Risk.insertMany(data)
-  .then((result) => {
-    console.log('Data inserted successfully:', result);
-  })
-  .catch((error) => {
-    console.error('Error inserting data:', error);
-  });
+// Risk.insertMany(data)
+//   .then((result) => {
+//     console.log('Data inserted successfully:', result);
+//   })
+//   .catch((error) => {
+//     console.error('Error inserting data:', error);
+//   });
+const insertData = async () => {
+  for (const item of data) {
+      // Check if a record with the same riskScore exists
+      const existingRecord = await Risk.findOne({ riskScore: item.riskScore });
+
+      if (!existingRecord) {
+          // Insert data if it doesn't exist
+          await Risk.create(item);
+          console.log('Data inserted successfully:', item);
+      } else {
+          console.log('Data already exists, skipping:', item);
+      }
+  }
+};
+module.exports = {Risk,insertData}
